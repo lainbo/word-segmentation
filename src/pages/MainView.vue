@@ -22,6 +22,7 @@
         <div class="mb-8px flex items-center justify-end"> 123 </div>
         <div class="h-full overflow-y-auto">
           <a-checkbox-group
+            v-if="分词结果Arr?.length > 0"
             v-model="选中的词"
             class="checkbox_wrapper flex flex-wrap gap-10px overflow-hidden"
           >
@@ -39,6 +40,15 @@
               </template>
             </a-checkbox>
           </a-checkbox-group>
+          <div v-else class="h-full flex-c flex-1 flex-col">
+            <div>
+              <i
+                i-line-md-coffee-half-empty-twotone-loop
+                class="text-120px text-#aaa"
+              ></i>
+            </div>
+            <p class="mt-16px">左边输入的文字，将会分词在这里</p>
+          </div>
         </div>
       </div>
     </div>
