@@ -1,5 +1,15 @@
 :root {
   --ani-bezier: cubic-bezier(0.22, 0.58, 0.12, 0.98); // 动画曲线
+  --mimicry-btn-color: #fff; // 拟态按钮初始颜色，因为是纯色，所以不分A和B
+  --mimicry-btn-shadow-colorA: #d9d9d9; // 拟态按钮的阴影颜色A
+  --mimicry-btn-shadow-colorB: #fff; // 拟态按钮的阴影颜色B
+  --mimicry-btn-interactive-colorA: #eee; // 拟态按钮的交互颜色A
+  --mimicry-btn-interactive-colorB: #fff; // 拟态按钮的交互颜色B
 }
 :root[class~='dark'] {
+  --mimicry-btn-color: #333; // 拟态按钮初始颜色，因为是纯色，所以不分A和B
+  --mimicry-btn-shadow-colorA: #112; // 拟态按钮的阴影颜色A
+  --mimicry-btn-shadow-colorB: #343434; // 拟态按钮的阴影颜色B
+  --mimicry-btn-interactive-colorA: #222; // 拟态按钮的交互颜色A
+  --mimicry-btn-interactive-colorB: #222; // 拟态按钮的交互颜色B
 }

@@ -37,3 +37,13 @@ export function hexToRgb(hex: string) {
   const [r, g, b, a = 1] = getRgb()
   return `${r}, ${g}, ${b}${a !== 1 ? `, ${a}` : ''}`
 }
+
+/**
+ * 打开链接
+ * @param url 要打开的链接
+ * @example openUrl('https://www.baidu.com')
+ * @description utools环境下使用utools的shellOpenExternal方法，否则使用window.open
+ */
+export function openUrl(url: string) {
+  window?.utools ? window.utools.shellOpenExternal(url) : globalThis.open(url)
+}
