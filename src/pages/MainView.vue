@@ -69,9 +69,17 @@
             v-model="选中的词"
             class="checkbox_wrapper flex flex-wrap gap-10px overflow-hidden"
           >
-            <a-checkbox v-for="item in 分词结果Arr" :key="item.index" :value="item.index">
+            <a-checkbox
+              v-for="item in 分词结果Arr"
+              :key="item.index"
+              :value="item.index"
+              @mousedown="handleMouseDown(item.index)"
+              @mouseup="handleMouseUp"
+              @mousemove="throttledHandleMouseMove(item.index)"
+            >
               <template #checkbox="{ checked }">
                 <a-tag
+                  class="select-none"
                   size="large"
                   :bordered="!checked"
                   color="arcoblue"
@@ -100,6 +108,7 @@
 
 <script setup lang="ts">
 import { Message } from '@arco-design/web-vue'
+import { throttle } from 'lodash-es'
 
 const 用户输入 = ref('')
 const 选中的词 = ref([])
@@ -184,6 +193,36 @@ function 搜索结果() {
     'https://www.baidu.com/s?wd=%s'
   const 拼接出来的url = 搜索引擎url?.replace('%s', encodeURIComponent(拼接选中的词.value))
   openUrl(拼接出来的url)
+}
+const mousePressed = ref(false)
+const startIndex = ref<number | null>(null)
+function handleMouseDown(index: number) {
+  startIndex.value = index
+  mousePressed.value = true
+}
+function handleMouseMove(index: number) {
+  if (mousePressed.value && startIndex.value !== null) {
+    const endIndex = index
+    const minIndex = Math.min(startIndex.value, endIndex)
+    const maxIndex = Math.max(startIndex.value, endIndex)
+
+    const validIndices = 分词结果Arr.value.map((item: 分词结果item) => item.index)
+
+    // 保存原有的选中词
+    const newSelectedWords = new Set(选中的词.value)
+    for (let i = minIndex; i <= maxIndex; i++) {
+      if (validIndices.includes(i)) {
+        newSelectedWords.add(i)
+      }
+    }
+    // 更新选中词
+    选中的词.value = Array.from(newSelectedWords)
+  }
+}
+const throttledHandleMouseMove = throttle(handleMouseMove, 100)
+
+function handleMouseUp() {
+  mousePressed.value = false
 }
 
 onMounted(() => {
