@@ -17,7 +17,7 @@
       />
 
       <div
-        class="right_main flex flex-col overflow-hidden border border-[var(--color-fill-2)] border-l-none px-12px pb-24px pt-6px"
+        class="right_main flex flex-col overflow-hidden border border-[var(--color-fill-2)] border-l-none px-7px pb-24px pt-6px"
       >
         <div class="operation_btn mb-8px flex items-center justify-end space-x-8px">
           <MimicryBtn
@@ -67,29 +67,29 @@
           <a-checkbox-group
             v-if="分词结果Arr.length > 0"
             v-model="选中的词"
-            class="checkbox_wrapper flex flex-wrap gap-10px overflow-hidden"
+            class="checkbox_wrapper flex flex-wrap overflow-hidden"
           >
-            <a-checkbox
+            <div
               v-for="item in 分词结果Arr"
               :key="item.index"
-              :value="item.index"
               @mousedown="handleMouseDown(item.index)"
-              @mouseup="handleMouseUp"
-              @mousemove="throttledHandleMouseMove(item.index)"
+              @mousemove="handleMouseMove(item.index)"
             >
-              <template #checkbox="{ checked }">
-                <a-tag
-                  class="select-none"
-                  size="large"
-                  :bordered="!checked"
-                  color="arcoblue"
-                  :checked="checked"
-                  checkable
-                >
-                  {{ item.segment }}
-                </a-tag>
-              </template>
-            </a-checkbox>
+              <a-checkbox :value="item.index">
+                <template #checkbox="{ checked }">
+                  <a-tag
+                    class="select-none"
+                    size="large"
+                    :bordered="!checked"
+                    color="arcoblue"
+                    :checked="checked"
+                    checkable
+                  >
+                    {{ item.segment }}
+                  </a-tag>
+                </template>
+              </a-checkbox>
+            </div>
           </a-checkbox-group>
           <div v-else class="h-full flex-c flex-1 flex-col">
             <div>
@@ -108,7 +108,6 @@
 
 <script setup lang="ts">
 import { Message } from '@arco-design/web-vue'
-import { throttle } from 'lodash-es'
 
 const 用户输入 = ref('')
 const 选中的词 = ref([])
@@ -194,12 +193,14 @@ function 搜索结果() {
   const 拼接出来的url = 搜索引擎url?.replace('%s', encodeURIComponent(拼接选中的词.value))
   openUrl(拼接出来的url)
 }
-const mousePressed = ref(false)
+
+const checkboxGroupRef = ref()
+const { pressed: mousePressed } = useMousePressed({ target: checkboxGroupRef })
 const startIndex = ref<number | null>(null)
 function handleMouseDown(index: number) {
   startIndex.value = index
-  mousePressed.value = true
 }
+
 function handleMouseMove(index: number) {
   if (mousePressed.value && startIndex.value !== null) {
     const endIndex = index
@@ -219,17 +220,11 @@ function handleMouseMove(index: number) {
     选中的词.value = Array.from(newSelectedWords)
   }
 }
-const throttledHandleMouseMove = throttle(handleMouseMove, 100)
-
-function handleMouseUp() {
-  mousePressed.value = false
-}
 
 onMounted(() => {
-  if (!window?.utools) {
-    return
+  if (window?.utools) {
+    utoolsInit()
   }
-  utoolsInit()
 })
 </script>
 
@@ -243,7 +238,8 @@ onMounted(() => {
   }
 }
 .checkbox_wrapper:deep(.arco-checkbox) {
-  margin: 0;
+  margin: 0 5px 10px 5px;
+  padding: 0;
   overflow: hidden;
 }
 .checkbox_wrapper {
