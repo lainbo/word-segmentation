@@ -110,7 +110,7 @@
 import { Message } from '@arco-design/web-vue'
 
 const 用户输入 = ref('')
-const 选中的词 = ref([])
+const 选中的词 = ref<any>([])
 type 分词方式Type = 'grapheme' | 'word' | 'sentence' | undefined
 
 const 搜索引擎选项 = ref([
@@ -175,8 +175,8 @@ interface 分词结果item {
 const 拼接选中的词 = ref('')
 watch(选中的词, () => {
   拼接选中的词.value = 选中的词.value
-    .sort((a, b) => a - b)
-    .map(index => {
+    .sort((a: any, b: any) => a - b)
+    .map((index: any) => {
       return 分词结果Arr.value.find((item: 分词结果item) => item.index === index).segment
     })
     .join('')
