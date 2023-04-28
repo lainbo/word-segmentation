@@ -17,7 +17,7 @@
       />
 
       <div
-        class="right_main flex flex-col overflow-hidden border border-[var(--color-fill-2)] border-l-none px-12px pb-24px pt-6px"
+        class="right_main flex flex-col overflow-hidden border border-[var(--color-fill-2)] border-l-none px-7px pb-24px pt-6px"
       >
         <div class="operation_btn mb-8px flex items-center justify-end space-x-8px">
           <MimicryBtn
@@ -67,21 +67,29 @@
           <a-checkbox-group
             v-if="分词结果Arr.length > 0"
             v-model="选中的词"
-            class="checkbox_wrapper flex flex-wrap gap-10px overflow-hidden"
+            class="checkbox_wrapper flex flex-wrap overflow-hidden"
           >
-            <a-checkbox v-for="item in 分词结果Arr" :key="item.index" :value="item.index">
-              <template #checkbox="{ checked }">
-                <a-tag
-                  size="large"
-                  :bordered="!checked"
-                  color="arcoblue"
-                  :checked="checked"
-                  checkable
-                >
-                  {{ item.segment }}
-                </a-tag>
-              </template>
-            </a-checkbox>
+            <div
+              v-for="item in 分词结果Arr"
+              :key="item.index"
+              @mousedown="handleMouseDown(item.index)"
+              @mousemove="handleMouseMove(item.index)"
+            >
+              <a-checkbox :value="item.index">
+                <template #checkbox="{ checked }">
+                  <a-tag
+                    class="select-none"
+                    size="large"
+                    :bordered="!checked"
+                    color="arcoblue"
+                    :checked="checked"
+                    checkable
+                  >
+                    {{ item.segment }}
+                  </a-tag>
+                </template>
+              </a-checkbox>
+            </div>
           </a-checkbox-group>
           <div v-else class="h-full flex-c flex-1 flex-col">
             <div>
@@ -186,11 +194,37 @@ function 搜索结果() {
   openUrl(拼接出来的url)
 }
 
-onMounted(() => {
-  if (!window?.utools) {
-    return
+const checkboxGroupRef = ref()
+const { pressed: mousePressed } = useMousePressed({ target: checkboxGroupRef })
+const startIndex = ref<number | null>(null)
+function handleMouseDown(index: number) {
+  startIndex.value = index
+}
+
+function handleMouseMove(index: number) {
+  if (mousePressed.value && startIndex.value !== null) {
+    const endIndex = index
+    const minIndex = Math.min(startIndex.value, endIndex)
+    const maxIndex = Math.max(startIndex.value, endIndex)
+
+    const validIndices = 分词结果Arr.value.map((item: 分词结果item) => item.index)
+
+    // 保存原有的选中词
+    const newSelectedWords = new Set(选中的词.value)
+    for (let i = minIndex; i <= maxIndex; i++) {
+      if (validIndices.includes(i)) {
+        newSelectedWords.add(i)
+      }
+    }
+    // 更新选中词
+    选中的词.value = Array.from(newSelectedWords)
   }
-  utoolsInit()
+}
+
+onMounted(() => {
+  if (window?.utools) {
+    utoolsInit()
+  }
 })
 </script>
 
@@ -204,7 +238,8 @@ onMounted(() => {
   }
 }
 .checkbox_wrapper:deep(.arco-checkbox) {
-  margin: 0;
+  margin: 0 5px 10px 5px;
+  padding: 0;
   overflow: hidden;
 }
 .checkbox_wrapper {
