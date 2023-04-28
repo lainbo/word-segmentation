@@ -8,6 +8,7 @@ import {
 } from 'unocss'
 import presetRemToPx from '@unocss/preset-rem-to-px'
 import presetWebFonts from '@unocss/preset-web-fonts'
+
 export default defineConfig({
   shortcuts: [
     {
